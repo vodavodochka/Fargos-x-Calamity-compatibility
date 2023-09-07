@@ -1,0 +1,104 @@
+﻿using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+using Microsoft.Xna.Framework;
+using System.Collections.Generic;
+using Terraria.Localization;
+using CalamityMod.Items.Armor.Bloodflare;
+using CalamityMod.Items.Accessories;
+using CalamityMod.Items.Weapons.Melee;
+using CalamityMod.Items.Weapons.Magic;
+using CalamityMod.Items.Weapons.Ranged;
+using CalamityMod.Items.Weapons.Summon;
+using CalamityMod.Items.Pets;
+using FargoCalamity.Calamity.Enchantments;
+
+namespace FargoCalamity.Calamity.Enchantments
+{
+    public class BloodflareEnchant : ModItem
+    {
+        private readonly Mod calamity = ModLoader.GetMod("CalamityMod");
+
+        public virtual bool Autoload(ref string name)
+        {
+            return ModLoader.GetMod("CalamityMod") != null;
+        }
+
+        public override void SetStaticDefaults()
+        {
+            // DisplayName.SetDefault("Bloodflare Enchantment");
+            /* Tooltip.SetDefault(
+@"'The souls of the fallen are at your disposal...'
+Press Y to trigger a brimflame frenzy effect
+While under this effect, your damage is significantly boosted
+However, this comes at the cost of rapid life loss and no mana regeneration
+Enemies below 50% life have a chance to drop hearts when struck
+Enemies above 50% life have a chance to drop mana stars when struck
+Enemies killed during a Blood Moon have a much higher chance to drop Blood Orbs
+True melee strikes will heal you
+After striking an enemy 15 times with true melee you will enter a blood frenzy for 5 seconds
+During this you will gain 25% increased melee damage, critical strike chance, and contact damage is halved
+This effect has a 30 second cooldown
+Press Y to unleash the lost souls of polterghast to destroy your enemies
+This effect has a 30 second cooldown
+Ranged weapons have a chance to fire bloodsplosion orbs
+Magic weapons will sometimes fire ghostly bolts
+Magic critical strikes cause flame explosions every 2 seconds
+Summons polterghast mines to circle you
+Rogue critical strikes have a 50% chance to heal you
+Effects of the Core of the Blood God and Eldritch Soul Artifact"); */
+        }
+
+        public override void SetDefaults()
+        {
+            Item.width = 20;
+            Item.height = 20;
+            Item.accessory = true;
+            ItemID.Sets.ItemNoGravity[Item.type] = true;
+            Item.rare = 10;
+            Item.value = 3000000;
+        }
+
+        public override void UpdateAccessory(Player player, bool hideVisual)
+        {
+            if (!FargoCalamity.Instance.CalamityLoaded) return;
+
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.BloodflareEffects))
+            {
+                ModLoader.GetMod("CalamityMod").Find<ModItem>("BloodflareHeadMelee").UpdateArmorSet(player);
+                ModLoader.GetMod("CalamityMod").Find<ModItem>("BloodflareHeadMagic").UpdateArmorSet(player);
+                ModLoader.GetMod("CalamityMod").Find<ModItem>("BloodflareHeadRanged").UpdateArmorSet(player);
+                //ModLoader.GetMod("CalamityMod").Find<ModItem>("BloodflareHeadSummon").UpdateArmorSet(player);
+                ModLoader.GetMod("CalamityMod").Find<ModItem>("BloodflareHeadRogue").UpdateArmorSet(player);
+            }
+           
+            if (SoulConfig.Instance.GetValue(SoulConfig.Instance.calamityToggles.PolterMines))
+            {
+                ModLoader.GetMod("CalamityMod").Find<ModItem>("BloodflareHeadSummon").UpdateArmorSet(player);
+            }
+
+            ModLoader.GetMod("CalamityMod").Find<ModItem>("CoreOfTheBloodGod").UpdateAccessory(player, hideVisual);
+            ModLoader.GetMod("CalamityMod").Find<ModItem>("EldritchSoulArtifact").UpdateAccessory(player, hideVisual);
+            //brimflame
+            ModLoader.GetMod("FargoCalamity").Find<ModItem>("BrimflameEnchant").UpdateAccessory(player, hideVisual);
+        }
+
+        public override void AddRecipes()
+        {
+            if (!FargoCalamity.Instance.CalamityLoaded) return;
+
+            Recipe recipe = CreateRecipe();
+
+            recipe.AddRecipeGroup("FargoCalamity:AnyBloodflareHelmet");
+            recipe.AddIngredient(ModContent.ItemType<BloodflareBodyArmor>());
+            recipe.AddIngredient(ModContent.ItemType<BloodflareCuisses>());
+            recipe.AddIngredient(ModContent.ItemType<BrimflameEnchant>());
+            recipe.AddIngredient(ModContent.ItemType<CoreOfTheBloodGod>());
+            recipe.AddIngredient(ModContent.ItemType<EldritchSoulArtifact>());
+
+
+            recipe.AddTile(TileID.LunarCraftingStation);
+            recipe.Register();
+        }
+    }
+}

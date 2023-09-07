@@ -1,0 +1,4 @@
+Fargo's Souls x Calamity Сompatibility
+This mod just a port of the old Fargo's Souls DLC.
+This mod is addon for Fargo's Souls mod, it adds some new soul, forces, essences and enchantments.
+In order for the Enchantmemts to work, you need to go to the configuration and enable them.
